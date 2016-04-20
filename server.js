@@ -6,10 +6,12 @@ var express = require("express"),
   bodyParser = require("body-parser");
 
 var jsonParser = bodyParser.json();
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
+var urlencodedParser = bodyParser.urlencoded({
+  extended: false
+});
 app.use(express.static(__dirname));
 
-var url = 'mongodb://localhost:27017/assign7';
+var url = "mongodb://localhost:27017/assign7";
 
 app.listen(3000, function() {
   "use strict";
@@ -25,7 +27,7 @@ app.get("/links", urlencodedParser, function(req, res) {
     var cursor = db.collection("links").find();
     cursor.each(function(err, doc) {
       assert.equal(err, null);
-      if (doc != null) {
+      if (doc !== null) {
         result.push(doc);
       } else {
         db.close();
@@ -49,7 +51,7 @@ app.post("/links", jsonParser, function(req, res) {
     db.close();
     res.sendStatus(204);
   });
-  
+
 
 });
 app.get("/click/:title", urlencodedParser, function(req, res) {
@@ -57,14 +59,13 @@ app.get("/click/:title", urlencodedParser, function(req, res) {
   MongoClient.connect(url, function(err, db) {
     assert.equal(null, err);
     console.log("GET click/");
-    var cursor = db.collection("links").find({ "title": req.params.title});
+    var cursor = db.collection("links").find({
+      "title": req.params.title
+    });
     cursor.each(function(err, doc) {
       assert.equal(err, null);
-      if (doc != null) {
-        db.collection("links").update(
-          { title: req.params.title },
-          { $inc: { clicks: 1 } }
-        );
+      if (doc !== null) {
+        db.collection("links").update({title: req.params.title}, {$inc: {clicks: 1}});
         db.close();
         res.redirect(doc.link);
       }
